@@ -1,3 +1,8 @@
+#This is Arshdeep's Script, and I (Nadin Ibrahim) editted/added to the script.
+#There are 4 major edits (marked with: ###Nadin's Addition #n)
+#There are minor edits throughput: for grammar/spelling; adding package installations; changing commented output values (e.g. number of unique species) since the Anopheles data from BOLD contains more samples than during Arshdeep's initial analysis; and adding extra comments and a concluding paragraph
+#The script is copied and repeated twice, at the top with Arshdeep's original script (without my edits), and at the bottom (with my edits). Please scroll to line 155 to view the edits.
+
 # Part C1. Uploading Packages/ softwares----
 library(tidyverse)
 library(vegan)
@@ -149,17 +154,32 @@ plot(Anopheles.accum)
 
 ####################################----Nadin's Edits to the Script---#############
 
-#Note: 
-#there were minor edits (e.g. the number of species was changed) since new data seemed to be added to BOLD and 5 major edits
-#5 major edits are marked with: ###Nadin's Addition #n
   
 # Part C1. Uploading Packages/ softwares----
+
+#install.packages("tidyverse")
 library(tidyverse)
+#install.packages("vegan")
 library(vegan)
+#install.packages("iNEXT")
 library(iNEXT)
+#install.packages("ape")
 library(ape)
+#install.packages("RSQLite")
 library(RSQLite)
+
+#Code for installation of needed Bioconductor packages for older R versions (3.4 or earlier).
+#source("https://bioconductor.org/biocLite.R")
+#biocLite("Biostrings")
+#biocLite("muscle")
+#biocLite("DECIPHER")
+
+#Code for installation for R version 3.5 or greater. You can install whichever Bioconductor packages you need.
+#Instructions from: https://bioconductor.org/install/
+#install.packages("BiocManager")
 library(BiocManager)
+#BiocManager::install(c("Biostrings", "DECIPHER", "muscle"))
+
 library(DECIPHER)
 library(muscle)
 library(Biostrings)
@@ -168,10 +188,9 @@ library(Biostrings)
 
 #In India (the country where I am from), Malaria is a very serious disease caused by the bite of a Mosquito infected with parasities. Malaria is rare in Canada and the United States. It is found in over 90 countries around the world, mainly in Africa, Asia, Oceania, and South and Central America. The risk of malaria is highest in parts of Oceania and in sub-Saharan Africa. Malaria is caused by a bite from a mosquito infected with parasites. Anopheles is a genus of Mosquito which cause malaria in humans in endemic areas. I am taking this assignment exercise to explore what information we have for this species. What is the species richness? How many specices have been collected from each country. 
 
-# API tool was used to obtain data directly from BOLD database for our species 'Anopheles'. This data was accessed on Oct 1, 11.27 pm, and this is a public database.
+# API tool was used to obtain data directly from BOLD database for our species 'Anopheles'. This data was accessed on November 11, 6:15 pm, and this is a public database.
 
 Anopheles <- read_tsv("http://www.boldsystems.org/index.php/API_Public/combined?taxon=Anopheles&format=tsv")
-#Obtained: November 11, 2019 6:15pm
 
 # In environment window, we can see that we got an object named 'Anopheles' which has 11833 observations of 80 variables.
 
@@ -287,12 +306,7 @@ Anopheles1
 Anopheles2 <- Anopheles1 %>%
   filter(!is.na(country))
 
-#Now we create a bar graph. This is using the stardard base R barplot() function
-barplot(table(Anopheles2$country), xlab= "Countries", ylab = "Number Of Specimens", main = "Number of Specimens (Anopheles) Sampled From Each Country", las = 2, cex.names = 0.4, ylim = c(0,2000))
-
-#Change Democratic Repblic of Congo to just Congo (figure out how to do that)
-
-#An alternative way of creating a bar graph, is using the gglpot2 package from the tidyverse package. To change things up a bit from out last bar graph, we will flip the axis and also fill in the colour of the barplots to give them a turquoise colour
+#We can create a bar graph using the gglpot2 package from the tidyverse package. We will keep the Country names on the y-axis and the number of specimens on the x-axis and also fill in the colour of the barplots to give them a turquoise colour
 ggplot(data = (Anopheles2)) + 
   geom_bar(mapping = aes(x = country), stat = "count", fill = "turquoise") +
   labs(title = "Number of Specimens (Anopheles) Sampled From Each Country", x = "Countries", y = "Number of Specimens") + coord_flip() + theme(text = element_text(size=9))
@@ -337,7 +351,7 @@ plot(Anopheles.accum)
 # Here, we can see, as samples are collected from countries, new species are being added.  
 # Sampling does not seem complete yet based on this species accumulation curve as the curve has not begun to level off. More sampling should be performed to get a better representation of true species diversity.
 
-###Nadin's Addition 3: Using the vegdist() function from the vegan package to create a cluster dendrogram by country
+###Nadin's Addition 3: Using the vegdist() function from the vegan package to look at the dissimilarity in community composition between countries and to create a cluster dendrogram by country
 
 Anopheles_clustered <- vegdist(Anopheles.spread.by.country, method="bray") %>%
   hclust(method = "ward.D2")
